@@ -132,20 +132,13 @@ struct WelcomeView: View {
     private func connectWallet() {
         isLoading = true
         
-        // Simulate wallet connection
+        // Simulate wallet connection with guaranteed success
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             isLoading = false
-            // Simulate success/failure
-            if Bool.random() {
-                withAnimation {
-                    isAuthenticated = true
-                }
-            } else {
-                error = NSError(domain: "WalletConnection", code: 1, userInfo: [
-                    NSLocalizedDescriptionKey: "Failed to connect to wallet. Please try again."
-                ])
-                showError = true
+            withAnimation {
+                isAuthenticated = true
             }
+            HapticManager.notification(type: .success)
         }
     }
 }
