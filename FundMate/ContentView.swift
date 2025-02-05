@@ -57,9 +57,9 @@ struct ContentView: View {
                     .tabTransition(direction: Double(Tab.settings.index - previousTab.index))
             }
             .tint(Theme.primary)
-            .onChange(of: selectedTab) { newTab in
+            .onChange(of: selectedTab) { oldTab, newTab in
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                    previousTab = selectedTab
+                    previousTab = oldTab
                     selectedTab = newTab
                 }
             }
@@ -213,7 +213,7 @@ struct ChatRow: View {
                 // Chat info
                 VStack(alignment: .leading, spacing: 4) {
                     HStack {
-                        if let user = chat.user {
+                        if chat.user != nil {
                             Button(action: { showingProfile = true }) {
                                 Text(chat.name)
                                     .font(.headline)

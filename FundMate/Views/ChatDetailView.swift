@@ -20,9 +20,9 @@ struct ChatDetailView: View {
                     }
                     .padding()
                 }
-                .onChange(of: messages) { _ in
+                .onChange(of: messages) { oldMessages, newMessages in
                     withAnimation {
-                        proxy.scrollTo(messages.last?.id, anchor: .bottom)
+                        proxy.scrollTo(newMessages.last?.id, anchor: .bottom)
                     }
                 }
                 .onAppear {

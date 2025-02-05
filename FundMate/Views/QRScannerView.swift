@@ -52,9 +52,9 @@ struct QRScannerView: View {
             .onDisappear {
                 cameraManager.stopScanning()
             }
-            .onChange(of: cameraManager.scannedCode) { code in
-                if let code {
-                    scannedAddress = code
+            .onChange(of: cameraManager.scannedCode) { oldCode, newCode in
+                if let newCode {
+                    scannedAddress = newCode
                     showingPaymentSheet = true
                 }
             }
