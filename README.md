@@ -39,12 +39,14 @@ FundMate is a modern iOS application that combines messaging and cryptocurrency 
   - Combine (State management)
 
 ## 📱 Screenshots
-![Simulator Screenshot - iPhone 16 Pro - 2025-02-05 at 12 19 08](https://github.com/user-attachments/assets/4945fefb-da38-487c-ba81-7832bd28ec1c)
-![Simulator Screenshot - iPhone 16 Pro - 2025-02-05 at 12 20 04](https://github.com/user-attachments/assets/f3995479-a540-499f-8cb3-9bb1a0412eac)
-![Simulator Screenshot - iPhone 16 Pro - 2025-02-05 at 12 20 11](https://github.com/user-attachments/assets/abebda92-edd7-49b5-918a-79d814b51536)
-![Simulator Screenshot - iPhone 16 Pro - 2025-02-05 at 12 20 47](https://github.com/user-attachments/assets/900be893-5098-4a2c-b598-bdacf212ba2d)
-![Simulator Screenshot - iPhone 16 Pro - 2025-02-05 at 12 20 24](https://github.com/user-attachments/assets/d732bcf2-eab7-4290-88ac-c89a4c43c771)
-![Simulator Screenshot - iPhone 16 Pro - 2025-02-05 at 12 20 34](https://github.com/user-attachments/assets/a1050309-49d4-4ef2-902f-54ff07009b5a)
+
+<img src="https://github.com/user-attachments/assets/4945fefb-da38-487c-ba81-7832bd28ec1c" width="300">
+<img src="https://github.com/user-attachments/assets/f3995479-a540-499f-8cb3-9bb1a0412eac" width="300">
+<img src="https://github.com/user-attachments/assets/abebda92-edd7-49b5-918a-79d814b51536" width="300">
+<img src="https://github.com/user-attachments/assets/900be893-5098-4a2c-b598-bdacf212ba2d" width="300">
+<img src="https://github.com/user-attachments/assets/d732bcf2-eab7-4290-88ac-c89a4c43c771" width="300">
+<img src="https://github.com/user-attachments/assets/a1050309-49d4-4ef2-902f-54ff07009b5a" width="300">
+
 
 
 ## 🚀 Getting Started
