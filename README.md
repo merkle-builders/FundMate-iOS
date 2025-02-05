@@ -1,60 +1,117 @@
-# FundMate - Chat & Pay iOS App
+# FundMate
 
-FundMate is a modern iOS application that combines messaging and cryptocurrency payments, allowing users to chat and send payments seamlessly in one integrated experience.
+FundMate is a modern iOS application that combines secure messaging with cryptocurrency payments, allowing users to chat and transfer funds seamlessly in one integrated platform.
 
-## 🌟 Features
+## Features
 
-### 💬 Messaging
-- Real-time one-on-one and group chats
-- Message search functionality
-- Read receipts and typing indicators
-- Swipe to reply and message reactions
-
-### 💰 Payments
-- Send and receive cryptocurrency payments
-- Multi-token support (ETH, BTC, USDC, APT)
-- Real-time token conversion
-- QR code payment scanning
-- Transaction history tracking
-
-### 👤 Profile & Settings
-- Customizable usernames
-- Personal QR code for receiving payments
-- Dark mode support
-- Wallet management
-- Transaction history
-
-### 🔐 Security
+### Authentication
 - Secure wallet connection
-- Transaction authentication
-- Privacy settings
+- Biometric authentication support
+- QR code wallet address scanning
 
-## 🛠 Technical Stack
+### Messaging
+- Real-time chat functionality
+- Individual and group chat support
+- In-chat payment integration
+- Message status indicators
+- Rich media support (text, payment transactions)
 
-- **Framework:** SwiftUI
-- **Architecture:** MVVM
-- **Dependencies:** 
-  - CoreImage (QR Code generation)
-  - AVFoundation (QR scanning)
-  - Combine (State management)
+### Payments
+- Send/receive cryptocurrency
+- Multiple token support (BTC, ETH, USDC, APT)
+- Real-time token price tracking
+- Transaction history
+- QR code payment support
+- Detailed payment status tracking
 
-## 📱 Screenshots
+### Profile & Settings
+- User profile management
+- Wallet address management
+- Transaction history
+- Security settings
+- App preferences
 
-<img src="https://github.com/user-attachments/assets/4945fefb-da38-487c-ba81-7832bd28ec1c" width="300">
-<img src="https://github.com/user-attachments/assets/f3995479-a540-499f-8cb3-9bb1a0412eac" width="300">
-<img src="https://github.com/user-attachments/assets/abebda92-edd7-49b5-918a-79d814b51536" width="300">
-<img src="https://github.com/user-attachments/assets/900be893-5098-4a2c-b598-bdacf212ba2d" width="300">
-<img src="https://github.com/user-attachments/assets/d732bcf2-eab7-4290-88ac-c89a4c43c771" width="300">
-<img src="https://github.com/user-attachments/assets/a1050309-49d4-4ef2-902f-54ff07009b5a" width="300">
+### Notifications
+- Payment notifications
+- Friend requests
+- Real-time updates
+- Unread indicators
+- Mark all as read functionality
 
+## Technical Architecture
 
+### Models
+- `User`: User profile and wallet information
+- `Chat`: Chat session and message management
+- `Message`: Different types of messages (text, payments)
+- `Token`: Cryptocurrency token information
+- `Transaction`: Payment transaction details
+- `Notification`: System notifications and alerts
 
-## 🚀 Getting Started
+### Views
+- **Authentication**
+  - `WelcomeView`: Initial app entry point
+  - `QRScannerView`: QR code scanning interface
+  
+- **Chat**
+  - `HomeView`: Main chat list
+  - `ChatDetailView`: Individual chat interface
+  - `MessageBubble`: Message display component
+  - `PaymentBubble`: Payment transaction display
+  
+- **Payments**
+  - `PaymentsView`: Payment management interface
+  - `PaymentSheet`: Payment creation interface
+  - `TokenHoldingRow`: Token balance display
+  - `TransactionHistoryRow`: Transaction history display
+  
+- **Profile**
+  - `ProfileView`: User profile management
+  - `UserProfileView`: User profile display
+  
+- **Components**
+  - `LoadingView`: Loading state indicator
+  - `ErrorView`: Error state display
+  - `EmptyStateView`: Empty state display
+  - `SearchBar`: Search functionality
+  - `RefreshableView`: Pull-to-refresh functionality
+
+### Utilities
+- `TokenPriceTracker`: Real-time cryptocurrency price tracking
+- `HapticManager`: Haptic feedback management
+- `CameraManager`: Camera access for QR scanning
+- `BiometricAuthManager`: Biometric authentication
+- `Theme`: App-wide styling and theming
+
+## Design System
+
+### Colors
+- Primary: Main brand color
+- Secondary: Supporting color
+- Background: View backgrounds
+- SecondaryBackground: Alternative backgrounds
+- Text: Primary text color
+- SecondaryText: Supporting text color
+- Positive/Negative: Status indicators
+
+### Typography
+- Headlines: `.headline`
+- Body Text: `.body`
+- Captions: `.caption`
+- Subheadlines: `.subheadline`
+
+### Components
+- Buttons: Bordered and filled styles
+- Cards: Rounded corners with subtle shadows
+- Lists: Clean, minimal styling
+- Navigation: Standard iOS navigation patterns
+
+## Getting Started
 
 ### Prerequisites
 - Xcode 15.0+
 - iOS 17.0+
-- macOS Ventura or later
+- Swift 5.9+
 
 ### Installation
 1. Clone the repository
@@ -62,73 +119,33 @@ FundMate is a modern iOS application that combines messaging and cryptocurrency 
 git clone https://github.com/yourusername/FundMate.git
 ```
 
-
 2. Open the project in Xcode
-
 ```bash
 cd FundMate
 open FundMate.xcodeproj
 ```
 
+3. Build and run the project
 
+### Configuration
+- Update the token price tracking API keys in `TokenPriceTracker`
+- Configure the wallet connection settings
+- Set up your development team in Xcode
 
-3. Build and run the project in Xcode
+## Contributing
 
-## 📋 Project Structure
-FundMate/
-├── Models/
-│ ├── Chat.swift
-│ ├── Message.swift
-│ ├── Token.swift
-│ └── User.swift
-├── Views/
-│ ├── Components/
-│ │ └── SearchBar.swift
-│ ├── PaymentViews/
-│ │ ├── PaymentSheet.swift
-│ │ └── PaymentsView.swift
-│ ├── ChatDetailView.swift
-│ ├── ProfileView.swift
-│ └── QRScannerView.swift
-├── Utilities/
-│ ├── CameraManager.swift
-│ ├── HapticManager.swift
-│ └── QRGenerator.swift
-└── Resources/
-└── Theme.swift
-
-## 🎯 Future Enhancements
-
-- [ ] Push notifications
-- [ ] File sharing in chats
-- [ ] Voice messages
-- [ ] Multi-language support
-- [ ] Advanced payment features
-  - [ ] Payment scheduling
-  - [ ] Recurring payments
-  - [ ] Split bills
-- [ ] Blockchain integration
-  - [ ] Smart contract support
-  - [ ] Multiple chain support
-
-## 🤝 Contributing
-
-1. Fork the project
+1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
 3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## 📄 License
+## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
 
-## 👥 Authors
+## Acknowledgments
 
-- Mihir Sahu - *Initial work* - [Github](https://github.com/0xmihirsahu)
-
-## 🙏 Acknowledgments
-
-- SwiftUI community
-- Cryptocurrency payment integration resources
-- UI/UX design inspiration sources
+- SwiftUI for the modern UI framework
+- Apple for iOS development tools
+- The cryptocurrency community for inspiration
