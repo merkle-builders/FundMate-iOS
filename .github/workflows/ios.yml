@@ -20,7 +20,18 @@ jobs:
         with:
           xcode-version: '15.0'
 
+      - name: Check for Xcode project
+        id: check_files
+        run: |
+          if [ -d "FundMate.xcodeproj" ]; then
+            echo "xcode_project_exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "xcode_project_exists=false" >> $GITHUB_OUTPUT
+            echo "⚠️ No Xcode project found. Please create the project first."
+          fi
+
       - name: Set Default Scheme
+        if: steps.check_files.outputs.xcode_project_exists == 'true'
         run: |
           # Note: This assumes your main scheme is "FundMate"
           scheme="FundMate"
@@ -28,6 +39,7 @@ jobs:
           echo Using scheme: $scheme
 
       - name: Build
+        if: steps.check_files.outputs.xcode_project_exists == 'true'
         env:
           scheme: ${{ 'default' }}
           platform: ${{ 'iOS Simulator' }}
@@ -45,6 +57,7 @@ jobs:
             CODE_SIGNING_ALLOWED=NO
 
       - name: Test
+        if: steps.check_files.outputs.xcode_project_exists == 'true'
         env:
           scheme: ${{ 'default' }}
           platform: ${{ 'iOS Simulator' }}
