@@ -116,7 +116,7 @@ FundMate is a modern iOS application that combines secure messaging with cryptoc
 ### Installation
 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/FundMate.git
+git clone https://github.com/merkle-builders/FundMate-iOS
 ```
 
 2. Open the project in Xcode
