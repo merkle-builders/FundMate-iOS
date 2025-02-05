@@ -56,6 +56,11 @@ struct PaymentsView: View {
     @State private var isRefreshing = false
     @State private var error: Error?
     @State private var showError = false
+    @State private var selectedTab = PaymentTab.holdings
+    
+    enum PaymentTab {
+        case holdings, transactions
+    }
     
     private var totalBalance: Double {
         holdings.reduce(0) { total, holding in
@@ -148,45 +153,56 @@ struct PaymentsView: View {
                         }
                         .padding(.horizontal)
                         
-                        // Token Holdings Section
-                        VStack(alignment: .leading, spacing: 16) {
-                            Text("Your Holdings")
-                                .font(.headline)
-                                .padding(.horizontal)
-                            
-                            ForEach(holdings) { holding in
-                                TokenHoldingRow(holding: holding)
-                                
-                                if holding.id != holdings.last?.id {
-                                    Divider()
-                                        .padding(.horizontal)
-                                }
-                            }
+                        // Tab Switcher
+                        Picker("View", selection: $selectedTab) {
+                            Text("Holdings").tag(PaymentTab.holdings)
+                            Text("Transactions").tag(PaymentTab.transactions)
                         }
-                        .padding()
-                        .background(Color(uiColor: .systemBackground))
-                        .clipShape(RoundedRectangle(cornerRadius: 16))
-                        .shadow(color: .black.opacity(0.05), radius: 8)
+                        .pickerStyle(.segmented)
+                        .padding(.horizontal)
                         
-                        // Transaction History Section
-                        VStack(alignment: .leading, spacing: 16) {
-                            Text("Transaction History")
-                                .font(.headline)
-                                .padding(.horizontal)
-                            
-                            ForEach(filteredTransactions) { transaction in
-                                TransactionHistoryRow(transaction: transaction)
+                        // Content based on selected tab
+                        if selectedTab == .holdings {
+                            // Token Holdings Section
+                            VStack(alignment: .leading, spacing: 16) {
+                                Text("Your Holdings")
+                                    .font(.headline)
+                                    .padding(.horizontal)
                                 
-                                if transaction.id != filteredTransactions.last?.id {
-                                    Divider()
-                                        .padding(.horizontal)
+                                ForEach(holdings) { holding in
+                                    TokenHoldingRow(holding: holding)
+                                    
+                                    if holding.id != holdings.last?.id {
+                                        Divider()
+                                            .padding(.horizontal)
+                                    }
                                 }
                             }
+                            .padding()
+                            .background(Color(uiColor: .systemBackground))
+                            .clipShape(RoundedRectangle(cornerRadius: 16))
+                            .shadow(color: .black.opacity(0.05), radius: 8)
+                        } else {
+                            // Transaction History Section
+                            VStack(alignment: .leading, spacing: 16) {
+                                Text("Transaction History")
+                                    .font(.headline)
+                                    .padding(.horizontal)
+                                
+                                ForEach(filteredTransactions) { transaction in
+                                    TransactionHistoryRow(transaction: transaction)
+                                    
+                                    if transaction.id != filteredTransactions.last?.id {
+                                        Divider()
+                                            .padding(.horizontal)
+                                    }
+                                }
+                            }
+                            .padding()
+                            .background(Color(uiColor: .systemBackground))
+                            .clipShape(RoundedRectangle(cornerRadius: 16))
+                            .shadow(color: .black.opacity(0.05), radius: 8)
                         }
-                        .padding()
-                        .background(Color(uiColor: .systemBackground))
-                        .clipShape(RoundedRectangle(cornerRadius: 16))
-                        .shadow(color: .black.opacity(0.05), radius: 8)
                     }
                     .padding()
                 }

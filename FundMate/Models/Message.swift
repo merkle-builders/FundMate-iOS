@@ -12,10 +12,10 @@ struct Message: Identifiable, Equatable {
         case payment(amount: Double, status: PaymentStatus, note: String?)
     }
     
-    enum PaymentStatus: Equatable {
-        case pending
-        case completed
-        case failed
+    enum PaymentStatus: String {
+        case completed = "Completed"
+        case pending = "Pending"
+        case failed = "Failed"
     }
     
     static let mockMessages = [

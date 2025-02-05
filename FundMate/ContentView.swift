@@ -145,18 +145,44 @@ struct WelcomeView: View {
 
 struct HomeView: View {
     @State private var searchText = ""
-    @State private var showingProfile = false
+    @State private var showingNotifications = false
+    @State private var notifications: [Notification] = [
+        Notification(
+            id: UUID(),
+            type: .friendRequest,
+            user: User(
+                username: nil,
+                walletAddress: "0x456789abcdef456789abcdef456789abcdef4567",
+                avatarSystemName: "person.circle.fill"
+            ),
+            timestamp: Date(),
+            isRead: false
+        ),
+        Notification(
+            id: UUID(),
+            type: .payment(amount: 50.0, status: .completed),
+            user: User(
+                username: "Bob",
+                walletAddress: "0x789abcdef0123456789abcdef0123456789abcd",
+                avatarSystemName: "person.circle.fill"
+            ),
+            timestamp: Date().addingTimeInterval(-3600),
+            isRead: false
+        )
+    ]
     let chats = Chat.mockChats
     @Binding var isAuthenticated: Bool
+    
+    private var unreadCount: Int {
+        notifications.filter { !$0.isRead }.count
+    }
     
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                // Search bar
                 SearchBar(text: $searchText, placeholder: "Search chats")
                     .padding()
                 
-                // Chat list
                 List(chats) { chat in
                     ChatRow(chat: chat)
                 }
@@ -165,11 +191,20 @@ struct HomeView: View {
             .navigationTitle("Chats")
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button(action: {
-                        showingProfile = true
-                    }) {
-                        Image(systemName: "person.circle")
+                    Button(action: { showingNotifications = true }) {
+                        Image(systemName: unreadCount > 0 ? "bell.badge.fill" : "bell.fill")
                             .font(.title2)
+                            .overlay(alignment: .topTrailing) {
+                                if unreadCount > 0 {
+                                    Text("\(unreadCount)")
+                                        .font(.caption2)
+                                        .padding(4)
+                                        .background(.red)
+                                        .foregroundStyle(.white)
+                                        .clipShape(Circle())
+                                        .offset(x: 4, y: -4)
+                                }
+                            }
                     }
                 }
                 
@@ -182,8 +217,8 @@ struct HomeView: View {
                     }
                 }
             }
-            .sheet(isPresented: $showingProfile) {
-                ProfileView(isAuthenticated: $isAuthenticated)
+            .sheet(isPresented: $showingNotifications) {
+                NotificationsView(notifications: $notifications)
             }
         }
     }
@@ -230,6 +265,126 @@ struct ChatRow: View {
             }
             .padding(.vertical, 8)
         }
+    }
+}
+
+// Add these new types
+struct Notification: Identifiable {
+    let id: UUID
+    let type: NotificationType
+    let user: User
+    let timestamp: Date
+    var isRead: Bool
+    
+    enum NotificationType {
+        case friendRequest
+        case payment(amount: Double, status: Message.PaymentStatus)
+    }
+}
+
+struct NotificationsView: View {
+    @Binding var notifications: [Notification]
+    @Environment(\.dismiss) private var dismiss
+    
+    private var unreadCount: Int {
+        notifications.filter { !$0.isRead }.count
+    }
+    
+    var body: some View {
+        NavigationStack {
+            List(notifications) { notification in
+                NotificationRow(notification: notification)
+                    .listRowBackground(notification.isRead ? nil : Theme.secondaryBackground)
+            }
+            .navigationTitle("Notifications")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    if unreadCount > 0 {
+                        Button("Mark All as Read") {
+                            markAllAsRead()
+                        }
+                        .font(.subheadline)
+                    }
+                }
+                
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Done") {
+                        dismiss()
+                    }
+                }
+            }
+        }
+    }
+    
+    private func markAllAsRead() {
+        withAnimation {
+            for index in notifications.indices {
+                notifications[index].isRead = true
+            }
+        }
+        HapticManager.notification(type: .success)
+    }
+}
+
+struct NotificationRow: View {
+    let notification: Notification
+    
+    private var userDisplayName: String {
+        notification.user.username ?? String(notification.user.walletAddress.prefix(6) + "..." + notification.user.walletAddress.suffix(4))
+    }
+    
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: notification.user.avatarSystemName)
+                .font(.title2)
+                .foregroundStyle(Theme.primary)
+            
+            VStack(alignment: .leading, spacing: 4) {
+                switch notification.type {
+                case .friendRequest:
+                    Text("\(userDisplayName) sent you a friend request")
+                        .font(.subheadline)
+                    
+                    Text(notification.user.walletAddress)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    
+                    HStack {
+                        Button("Accept") {
+                            // Handle accept
+                            HapticManager.notification(type: .success)
+                        }
+                        .buttonStyle(.bordered)
+                        
+                        Button("Decline", role: .destructive) {
+                            // Handle decline
+                            HapticManager.notification(type: .error)
+                        }
+                        .buttonStyle(.bordered)
+                    }
+                    
+                case .payment(let amount, let status):
+                    Text("\(userDisplayName) sent you $\(amount, specifier: "%.2f")")
+                        .font(.subheadline)
+                    
+                    Text(notification.user.walletAddress)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    
+                    Text(status.rawValue)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                
+                Text(notification.timestamp, style: .relative)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            
+            Spacer()
+        }
+        .padding(.vertical, 4)
     }
 }
 
