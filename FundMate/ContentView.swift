@@ -33,28 +33,28 @@ struct ContentView: View {
                         Label("Chats", systemImage: "bubble.left.and.bubble.right")
                     }
                     .tag(Tab.chats)
-                    .tabTransition(direction: Double(Tab.chats.index - previousTab.index))
+                    .modifier(TabTransitionModifier(direction: Double(Tab.chats.index - previousTab.index)))
                 
                 PaymentsView()
                     .tabItem {
                         Label("Payments", systemImage: "dollarsign.circle")
                     }
                     .tag(Tab.payments)
-                    .tabTransition(direction: Double(Tab.payments.index - previousTab.index))
+                    .modifier(TabTransitionModifier(direction: Double(Tab.payments.index - previousTab.index)))
                 
                 QRScannerView()
                     .tabItem {
                         Label("Scan", systemImage: "qrcode.viewfinder")
                     }
                     .tag(Tab.scan)
-                    .tabTransition(direction: Double(Tab.scan.index - previousTab.index))
+                    .modifier(TabTransitionModifier(direction: Double(Tab.scan.index - previousTab.index)))
                 
                 ProfileView(isAuthenticated: $isAuthenticated)
                     .tabItem {
                         Label("Settings", systemImage: "gear")
                     }
                     .tag(Tab.settings)
-                    .tabTransition(direction: Double(Tab.settings.index - previousTab.index))
+                    .modifier(TabTransitionModifier(direction: Double(Tab.settings.index - previousTab.index)))
             }
             .tint(Theme.primary)
             .onChange(of: selectedTab) { oldTab, newTab in
@@ -69,79 +69,6 @@ struct ContentView: View {
     }
 }
 
-struct WelcomeView: View {
-    @Binding var isAuthenticated: Bool
-    @State private var isLoading = false
-    @State private var error: Error?
-    @State private var showError = false
-    
-    var body: some View {
-        VStack(spacing: 24) {
-            // Logo and App Name
-            VStack(spacing: 16) {
-                Image(systemName: "message.and.waveform.fill")
-                    .font(.system(size: 80))
-                    .foregroundStyle(.tint)
-                    .symbolEffect(.bounce, options: .repeating)
-                
-                Text("FundMate")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-            }
-            .slideTransition(.top)
-            
-            // Welcome Message
-            VStack(spacing: 8) {
-                Text("Welcome to FundMate")
-                    .font(.title2)
-                    .fontWeight(.semibold)
-                
-                Text("Chat and send payments seamlessly")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-            }
-            .slideTransition(.trailing)
-            
-            Spacer()
-            
-            // Connect Wallet Button
-            if isLoading {
-                LoadingView(text: "Connecting wallet...")
-            } else {
-                Button(action: connectWallet) {
-                    Text("Connect Wallet")
-                        .font(.headline)
-                        .foregroundStyle(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Theme.primary)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
-                }
-                .padding(.horizontal)
-                .slideTransition(.bottom)
-            }
-        }
-        .padding()
-        .alert("Connection Error", isPresented: $showError, presenting: error) { _ in
-            Button("OK", role: .cancel) {}
-        } message: { error in
-            Text(error.localizedDescription)
-        }
-    }
-    
-    private func connectWallet() {
-        isLoading = true
-        
-        // Simulate wallet connection with guaranteed success
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            isLoading = false
-            withAnimation {
-                isAuthenticated = true
-            }
-            HapticManager.notification(type: .success)
-        }
-    }
-}
 
 struct HomeView: View {
     @State private var searchText = ""
