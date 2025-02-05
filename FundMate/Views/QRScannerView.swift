@@ -6,44 +6,43 @@ struct QRScannerView: View {
     @StateObject private var cameraManager = CameraManager()
     @State private var showingPaymentSheet = false
     @State private var scannedAddress: String?
+    @State private var showingError = false
     
     var body: some View {
         NavigationStack {
             ZStack {
-                if let session = cameraManager.captureSession {
-                    CameraPreviewView(session: session)
-                        .overlay {
-                            QRScannerOverlay()
-                        }
-                } else {
-                    Color.black
-                        .overlay {
-                            if let error = cameraManager.error {
-                                ErrorView(error: error) {
-                                    cameraManager.setupCaptureSession()
-                                }
-                            } else {
-                                ProgressView()
-                                    .tint(.white)
-                            }
-                        }
+                // Camera view
+                CameraPreview(captureSession: cameraManager.captureSession)
+                    .edgesIgnoringSafeArea(.all)
+                
+                // Scanning overlay
+                VStack(spacing: 20) {
+                    Spacer()
+                    
+                    // QR Frame
+                    RoundedRectangle(cornerRadius: 16)
+                        .strokeBorder(.white, lineWidth: 3)
+                        .frame(width: 250, height: 250)
+                        .background(.black.opacity(0.3))
+                        .clipShape(RoundedRectangle(cornerRadius: 16))
+                    
+                    // Scanning text
+                    Text("Scanning for QR Code...")
+                        .font(.headline)
+                        .foregroundStyle(.white)
+                    
+                    Spacer()
                 }
+                .background(Color.black.opacity(0.5))
             }
             .navigationTitle("Scan QR Code")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
+                ToolbarItem(placement: .topBarLeading) {
                     Button("Cancel") {
                         dismiss()
                     }
-                }
-                
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        // Toggle torch
-                    } label: {
-                        Image(systemName: "flashlight.off.fill")
-                    }
+                    .foregroundStyle(.white)
                 }
             }
             .onAppear {
@@ -62,6 +61,11 @@ struct QRScannerView: View {
                 if let address = scannedAddress {
                     PaymentSheet(receiverAddress: address)
                 }
+            }
+            .alert("Error", isPresented: $showingError) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(cameraManager.error?.localizedDescription ?? "Unknown error")
             }
         }
     }

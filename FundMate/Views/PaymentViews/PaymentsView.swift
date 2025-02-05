@@ -57,6 +57,7 @@ struct PaymentsView: View {
     @State private var error: Error?
     @State private var showError = false
     @State private var selectedTab = PaymentTab.holdings
+    @State private var isBalanceHidden = false
     
     enum PaymentTab {
         case holdings, transactions
@@ -67,6 +68,10 @@ struct PaymentsView: View {
             let price = priceTracker.prices[holding.token.symbol] ?? holding.token.currentPrice
             return total + (holding.amount * price)
         }
+    }
+    
+    private var formattedBalance: String {
+        isBalanceHidden ? "****" : String(format: "%.2f", totalBalance)
     }
     
     private var filteredTransactions: [Transaction] {
@@ -109,11 +114,25 @@ struct PaymentsView: View {
                     VStack(spacing: 24) {
                         // Total Balance Card
                         VStack(spacing: 8) {
-                            Text("Total Balance")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                            Text("$\(totalBalance, specifier: "%.2f")")
+                            HStack {
+                                Text("Total Balance")
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                                
+                                Button(action: { 
+                                    withAnimation {
+                                        isBalanceHidden.toggle()
+                                    }
+                                    HapticManager.impact(style: .light)
+                                }) {
+                                    Image(systemName: isBalanceHidden ? "eye.slash.fill" : "eye.fill")
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                            
+                            Text("$\(formattedBalance)")
                                 .font(.system(size: 34, weight: .bold))
+                                .contentTransition(.numericText())
                         }
                         .frame(maxWidth: .infinity)
                         .padding()
@@ -170,7 +189,7 @@ struct PaymentsView: View {
                                     .padding(.horizontal)
                                 
                                 ForEach(holdings) { holding in
-                                    TokenHoldingRow(holding: holding)
+                                    TokenHoldingRow(holding: holding, isBalanceHidden: $isBalanceHidden)
                                     
                                     if holding.id != holdings.last?.id {
                                         Divider()
@@ -438,6 +457,7 @@ struct TokenHolding: Identifiable {
 struct TokenHoldingRow: View {
     let holding: TokenHolding
     @EnvironmentObject private var priceTracker: TokenPriceTracker
+    @Binding var isBalanceHidden: Bool
     
     private var tokenPrice: Double {
         priceTracker.prices[holding.token.symbol] ?? holding.token.currentPrice
@@ -468,11 +488,14 @@ struct TokenHoldingRow: View {
             
             // Amount & Value
             VStack(alignment: .trailing) {
-                Text("\(holding.amount, specifier: "%.4f")")
+                Text(isBalanceHidden ? "****" : "\(holding.amount, specifier: "%.4f")")
                     .font(.headline)
-                Text("$\(totalValue, specifier: "%.2f")")
+                    .contentTransition(.numericText())
+                
+                Text(isBalanceHidden ? "****" : "$\(totalValue, specifier: "%.2f")")
                     .font(.caption)
                     .foregroundStyle(.secondary)
+                    .contentTransition(.numericText())
             }
         }
         .padding(.vertical, 4)
