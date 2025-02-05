@@ -2,13 +2,16 @@ import SwiftUI
 
 struct PaymentSheet: View {
     @Environment(\.dismiss) private var dismiss
+    @StateObject private var priceTracker = TokenPriceTracker()
     @State private var amount = ""
     @State private var note = ""
     @State private var selectedSourceToken = Token.mockTokens[0]
     @State private var selectedDestToken = Token.mockTokens[2]
     @State private var showingTokenPicker = false
     @State private var isSelectingSource = true
-    @State private var isProcessing = false
+    @State private var showingConfirmation = false
+    @State private var showingStatus = false
+    @State private var transactionStatus: TransactionStatusView.TransactionStatus = .processing
     var receiverAddress: String?
     @State private var recipientAddress = ""
     
@@ -57,21 +60,16 @@ struct PaymentSheet: View {
                     .padding(.horizontal)
                     
                     // Send Button
-                    Button(action: processPayment) {
-                        if isProcessing {
-                            ProgressView()
-                                .tint(.white)
-                        } else {
-                            Text("Send Payment")
-                                .font(.headline)
-                        }
+                    Button(action: showConfirmation) {
+                        Text("Send Payment")
+                            .font(.headline)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(amount.isEmpty ? Theme.secondary : Theme.primary)
+                            .foregroundStyle(.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(amount.isEmpty ? Theme.secondary : Theme.primary)
-                    .foregroundStyle(.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                    .disabled(amount.isEmpty || isProcessing)
+                    .disabled(amount.isEmpty)
                 }
                 .padding()
             }
@@ -84,10 +82,32 @@ struct PaymentSheet: View {
                     }
                 }
             }
+            .sheet(isPresented: $showingConfirmation) {
+                PaymentConfirmationSheet(
+                    amount: Double(amount) ?? 0,
+                    sourceToken: selectedSourceToken,
+                    destToken: selectedDestToken,
+                    recipientAddress: receiverAddress ?? recipientAddress,
+                    note: note.isEmpty ? nil : note,
+                    onConfirm: processPayment
+                )
+            }
             .sheet(isPresented: $showingTokenPicker) {
                 TokenPickerView(
                     selectedToken: isSelectingSource ? $selectedSourceToken : $selectedDestToken
                 )
+            }
+            .overlay {
+                if showingStatus {
+                    Color.black.opacity(0.3)
+                        .ignoresSafeArea()
+                        .overlay {
+                            TransactionStatusView(
+                                status: transactionStatus,
+                                onDismiss: handleStatusDismiss
+                            )
+                        }
+                }
             }
             .onAppear {
                 if let address = receiverAddress {
@@ -103,14 +123,56 @@ struct PaymentSheet: View {
         return String(format: "%.2f", convertedValue)
     }
     
+    private func showConfirmation() {
+        HapticManager.selection()
+        showingConfirmation = true
+    }
+    
     private func processPayment() {
-        isProcessing = true
-        
-        // Simulate payment processing
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            isProcessing = false
-            HapticManager.notification(type: .success)
+        Task {
+            do {
+                // Authenticate user
+                let authenticated = try await BiometricAuthManager.authenticate(
+                    reason: "Confirm payment of \(amount) \(selectedSourceToken.symbol)"
+                )
+                
+                guard authenticated else { return }
+                
+                await MainActor.run {
+                    showingConfirmation = false
+                    showingStatus = true
+                    transactionStatus = .processing
+                }
+                
+                // Simulate payment processing
+                try await Task.sleep(nanoseconds: 2_000_000_000)
+                
+                // Simulate success (80% chance) or failure
+                if Double.random(in: 0...1) < 0.8 {
+                    await MainActor.run {
+                        transactionStatus = .success
+                        HapticManager.paymentSuccess()
+                    }
+                } else {
+                    throw NSError(domain: "Payment", code: 1, userInfo: [
+                        NSLocalizedDescriptionKey: "Transaction failed. Please try again."
+                    ])
+                }
+                
+            } catch {
+                await MainActor.run {
+                    transactionStatus = .failure(error)
+                    HapticManager.paymentFailed()
+                }
+            }
+        }
+    }
+    
+    private func handleStatusDismiss() {
+        if case .success = transactionStatus {
             dismiss()
+        } else {
+            showingStatus = false
         }
     }
 }
@@ -120,6 +182,11 @@ struct PaymentInputSection: View {
     @Binding var amount: String
     let token: Token
     let onTokenTap: () -> Void
+    @EnvironmentObject private var priceTracker: TokenPriceTracker
+    
+    private var tokenPrice: Double {
+        priceTracker.prices[token.symbol] ?? token.currentPrice
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -143,7 +210,12 @@ struct PaymentInputSection: View {
                 Button(action: onTokenTap) {
                     HStack {
                         Image(systemName: token.iconName)
-                        Text(token.symbol)
+                        VStack(alignment: .leading) {
+                            Text(token.symbol)
+                            Text("$\(tokenPrice, specifier: "%.2f")")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
                         Image(systemName: "chevron.down")
                     }
                     .padding(8)

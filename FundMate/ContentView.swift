@@ -198,6 +198,7 @@ struct HomeView: View {
 
 struct ChatRow: View {
     let chat: Chat
+    @State private var showingProfile = false
     
     var body: some View {
         NavigationLink(destination: ChatDetailView(chat: chat)) {
@@ -206,9 +207,9 @@ struct ChatRow: View {
                 Group {
                     if chat.name.contains("Group") {
                         Image(systemName: chat.avatarSystemName)
-                            .font(.system(size: 32))  // Smaller size for group icon
+                            .font(.system(size: 32))
                             .foregroundStyle(Theme.primary)
-                            .frame(width: 40, height: 40)  // Fixed frame to match other avatars
+                            .frame(width: 40, height: 40)
                     } else {
                         Image(systemName: chat.avatarSystemName)
                             .font(.system(size: 40))
@@ -219,8 +220,16 @@ struct ChatRow: View {
                 // Chat info
                 VStack(alignment: .leading, spacing: 4) {
                     HStack {
-                        Text(chat.name)
-                            .font(.headline)
+                        if let user = chat.user {
+                            Button(action: { showingProfile = true }) {
+                                Text(chat.name)
+                                    .font(.headline)
+                                    .foregroundStyle(.primary)
+                            }
+                        } else {
+                            Text(chat.name)
+                                .font(.headline)
+                        }
                         
                         Spacer()
                         
@@ -236,6 +245,11 @@ struct ChatRow: View {
                 }
             }
             .padding(.vertical, 8)
+        }
+        .sheet(isPresented: $showingProfile) {
+            if let user = chat.user {
+                UserProfileView(user: user, isCurrentUser: false)
+            }
         }
     }
 }
