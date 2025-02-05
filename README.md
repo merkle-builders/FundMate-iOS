@@ -78,7 +78,7 @@ git clone https://github.com/merkle-builders/FundMate-iOS
 
 2. Open the project in Xcode
 ```bash
-cd FundMate
+cd FundMate-iOS
 open FundMate.xcodeproj
 ```
 
