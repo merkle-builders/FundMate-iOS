@@ -40,7 +40,14 @@ FundMate is a modern iOS application that combines messaging and cryptocurrency 
 
 ## 📱 Screenshots
 
-[Add screenshots here]
+<img src="https://github.com/user-attachments/assets/4945fefb-da38-487c-ba81-7832bd28ec1c" width="300">
+<img src="https://github.com/user-attachments/assets/f3995479-a540-499f-8cb3-9bb1a0412eac" width="300">
+<img src="https://github.com/user-attachments/assets/abebda92-edd7-49b5-918a-79d814b51536" width="300">
+<img src="https://github.com/user-attachments/assets/900be893-5098-4a2c-b598-bdacf212ba2d" width="300">
+<img src="https://github.com/user-attachments/assets/d732bcf2-eab7-4290-88ac-c89a4c43c771" width="300">
+<img src="https://github.com/user-attachments/assets/a1050309-49d4-4ef2-902f-54ff07009b5a" width="300">
+
+
 
 ## 🚀 Getting Started
 
@@ -51,14 +58,18 @@ FundMate is a modern iOS application that combines messaging and cryptocurrency 
 
 ### Installation
 1. Clone the repository
-bash`
-git clone https://github.com/yourusername/FundMate.git`
+```bash
+git clone https://github.com/yourusername/FundMate.git
+```
+
 
 2. Open the project in Xcode
 
-bash`
+```bash
 cd FundMate
-open FundMate.xcodeproj`
+open FundMate.xcodeproj
+```
+
 
 
 3. Build and run the project in Xcode
