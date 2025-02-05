@@ -6,6 +6,29 @@ struct UserProfileView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var showingQRCode = false
     @State private var showingPaymentSheet = false
+    @State private var isFriend = false  // In real app, this would come from a backend
+    
+    // Mock transactions for profile
+    private let transactions = [
+        Transaction(
+            id: UUID(),
+            amount: 20,
+            token: Token.mockTokens[0],
+            timestamp: Date().addingTimeInterval(-3600),
+            note: "Lunch",
+            chatName: nil,
+            type: .sent
+        ),
+        Transaction(
+            id: UUID(),
+            amount: 50,
+            token: Token.mockTokens[2],
+            timestamp: Date().addingTimeInterval(-86400),
+            note: "Movie tickets",
+            chatName: nil,
+            type: .received
+        )
+    ]
     
     var body: some View {
         NavigationStack {
@@ -55,6 +78,18 @@ struct UserProfileView: View {
                                 .frame(maxWidth: .infinity)
                             }
                             .tint(Theme.primary)
+                            
+                            // Add Friend Button
+                            Button(action: toggleFriend) {
+                                VStack {
+                                    Image(systemName: isFriend ? "person.badge.minus" : "person.badge.plus")
+                                        .font(.title)
+                                    Text(isFriend ? "Remove" : "Add Friend")
+                                        .font(.caption)
+                                }
+                                .frame(maxWidth: .infinity)
+                            }
+                            .tint(isFriend ? .red : Theme.primary)
                         }
                         .padding(.horizontal)
                     }
@@ -65,15 +100,10 @@ struct UserProfileView: View {
                             .font(.headline)
                             .padding(.horizontal)
                         
-                        ForEach(0..<3) { i in
-                            TransactionRow(
-                                name: isCurrentUser ? "User \(i + 1)" : user.displayName,
-                                amount: Double.random(in: 10...100),
-                                token: Token.mockTokens.randomElement()!,
-                                timestamp: Date().addingTimeInterval(Double(-i * 86400))
-                            )
+                        ForEach(transactions) { transaction in
+                            TransactionHistoryRow(transaction: transaction)
                             
-                            if i < 2 {
+                            if transaction.id != transactions.last?.id {
                                 Divider()
                                     .padding(.horizontal)
                             }
@@ -118,5 +148,12 @@ struct UserProfileView: View {
                 PaymentSheet(receiverAddress: user.walletAddress)
             }
         }
+    }
+    
+    private func toggleFriend() {
+        withAnimation {
+            isFriend.toggle()
+        }
+        HapticManager.notification(type: isFriend ? .success : .warning)
     }
 } 

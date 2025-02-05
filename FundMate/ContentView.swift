@@ -191,7 +191,6 @@ struct HomeView: View {
 
 struct ChatRow: View {
     let chat: Chat
-    @State private var showingProfile = false
     
     var body: some View {
         NavigationLink(destination: ChatDetailView(chat: chat)) {
@@ -213,16 +212,8 @@ struct ChatRow: View {
                 // Chat info
                 VStack(alignment: .leading, spacing: 4) {
                     HStack {
-                        if chat.user != nil {
-                            Button(action: { showingProfile = true }) {
-                                Text(chat.name)
-                                    .font(.headline)
-                                    .foregroundStyle(.primary)
-                            }
-                        } else {
-                            Text(chat.name)
-                                .font(.headline)
-                        }
+                        Text(chat.name)
+                            .font(.headline)
                         
                         Spacer()
                         
@@ -238,11 +229,6 @@ struct ChatRow: View {
                 }
             }
             .padding(.vertical, 8)
-        }
-        .sheet(isPresented: $showingProfile) {
-            if let user = chat.user {
-                UserProfileView(user: user, isCurrentUser: false)
-            }
         }
     }
 }

@@ -1,11 +1,12 @@
 import SwiftUI
 
 enum Theme {
-    static let primary = Color.blue
-    static let secondary = Color.gray
-    static let background = Color(uiColor: .systemBackground)
-    static let secondaryBackground = Color(uiColor: .secondarySystemBackground)
-    
-    static let text = Color(uiColor: .label)
+    static let primary = Color("ThemePrimary")
+    static let secondary = Color("ThemeSecondary")
+    static let background = Color("ThemeBackground")
+    static let secondaryBackground = Color("ThemeSecondaryBackground")
+    static let text = Color("ThemeText")
     static let secondaryText = Color(uiColor: .secondaryLabel)
+    static let positiveAmount = Color.green
+    static let negativeAmount = Color.red
 } 

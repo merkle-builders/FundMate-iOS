@@ -5,6 +5,7 @@ struct ChatDetailView: View {
     @State private var messageText = ""
     @State private var messages: [Message] = Message.mockMessages
     @State private var showingPaymentSheet = false
+    @State private var showingProfile = false
     @State private var scrollProxy: ScrollViewProxy?
     @State private var showScrollToBottom = false
     
@@ -51,8 +52,27 @@ struct ChatDetailView: View {
         }
         .navigationTitle(chat.name)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            if chat.user != nil {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: { showingProfile = true }) {
+                        Image(systemName: "person.circle")
+                            .font(.title2)
+                    }
+                }
+            }
+        }
         .sheet(isPresented: $showingPaymentSheet) {
-            PaymentSheet()
+            if let user = chat.user {
+                PaymentSheet(receiverAddress: user.walletAddress)
+            } else {
+                PaymentSheet()
+            }
+        }
+        .sheet(isPresented: $showingProfile) {
+            if let user = chat.user {
+                UserProfileView(user: user, isCurrentUser: false)
+            }
         }
     }
     

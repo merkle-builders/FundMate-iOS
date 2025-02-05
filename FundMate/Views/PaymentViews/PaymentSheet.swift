@@ -2,7 +2,7 @@ import SwiftUI
 
 struct PaymentSheet: View {
     @Environment(\.dismiss) private var dismiss
-    @StateObject private var priceTracker = TokenPriceTracker()
+    @EnvironmentObject private var priceTracker: TokenPriceTracker
     @State private var amount = ""
     @State private var note = ""
     @State private var selectedSourceToken = Token.mockTokens[0]

@@ -47,7 +47,7 @@ struct TransactionStatusView: View {
             }
         }
         .padding()
-        .background(.background)
+        .background(Theme.background)
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .shadow(radius: 20)
         .padding()
