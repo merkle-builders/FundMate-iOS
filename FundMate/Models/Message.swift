@@ -9,7 +9,7 @@ struct Message: Identifiable, Equatable {
     
     enum MessageType: Equatable {
         case text
-        case payment(amount: Double, status: PaymentStatus)
+        case payment(amount: Double, status: PaymentStatus, note: String?)
     }
     
     enum PaymentStatus: Equatable {
@@ -21,7 +21,7 @@ struct Message: Identifiable, Equatable {
     static let mockMessages = [
         Message(id: UUID(), content: "Hey! Can you send me $20 for lunch?", timestamp: Date().addingTimeInterval(-3600), isFromCurrentUser: false, type: .text),
         Message(id: UUID(), content: "Sure, sending it now!", timestamp: Date().addingTimeInterval(-3500), isFromCurrentUser: true, type: .text),
-        Message(id: UUID(), content: "$20.00", timestamp: Date().addingTimeInterval(-3400), isFromCurrentUser: true, type: .payment(amount: 20.0, status: .completed)),
+        Message(id: UUID(), content: "$20.00", timestamp: Date().addingTimeInterval(-3400), isFromCurrentUser: true, type: .payment(amount: 20.0, status: .completed, note: "For lunch today")),
         Message(id: UUID(), content: "Thanks! 😊", timestamp: Date().addingTimeInterval(-3300), isFromCurrentUser: false, type: .text),
     ]
 } 

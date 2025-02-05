@@ -201,6 +201,7 @@ struct TransactionRow: View {
     let amount: Double
     let token: Token
     let timestamp: Date
+    let note: String? = nil
     
     var body: some View {
         HStack {
@@ -212,6 +213,11 @@ struct TransactionRow: View {
             VStack(alignment: .leading) {
                 Text(name)
                     .font(.headline)
+                if let note = note {
+                    Text(note)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
                 Text(timestamp, style: .relative)
                     .font(.caption)
                     .foregroundStyle(.secondary)

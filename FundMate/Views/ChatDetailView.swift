@@ -98,8 +98,8 @@ struct MessageBubble: View {
                         .foregroundStyle(message.isFromCurrentUser ? .white : Theme.text)
                         .clipShape(RoundedRectangle(cornerRadius: 16))
                     
-                case .payment(let amount, let status):
-                    PaymentBubble(amount: amount, status: status)
+                case .payment(let amount, let status, let note):
+                    PaymentBubble(amount: amount, status: status, note: note)
                 }
                 
                 Text(message.timestamp, style: .time)
@@ -115,6 +115,7 @@ struct MessageBubble: View {
 struct PaymentBubble: View {
     let amount: Double
     let status: Message.PaymentStatus
+    let note: String?
     
     var body: some View {
         VStack(spacing: 8) {
@@ -124,11 +125,19 @@ struct PaymentBubble: View {
             Text("$\(amount, specifier: "%.2f")")
                 .font(.headline)
             
+            if let note = note {
+                Text(note)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
+            }
+            
             Text(statusText)
                 .font(.caption)
         }
         .padding()
-        .frame(width: 120)
+        .frame(width: 140)
         .background(Theme.secondaryBackground)
         .clipShape(RoundedRectangle(cornerRadius: 16))
     }

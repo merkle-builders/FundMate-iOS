@@ -157,39 +157,41 @@ struct HomeView: View {
     @Binding var isAuthenticated: Bool
     
     var body: some View {
-        VStack(spacing: 0) {
-            // Search bar
-            SearchBar(text: $searchText, placeholder: "Search chats")
-                .padding()
-            
-            // Chat list
-            List(chats) { chat in
-                ChatRow(chat: chat)
+        NavigationStack {
+            VStack(spacing: 0) {
+                // Search bar
+                SearchBar(text: $searchText, placeholder: "Search chats")
+                    .padding()
+                
+                // Chat list
+                List(chats) { chat in
+                    ChatRow(chat: chat)
+                }
+                .listStyle(.plain)
             }
-            .listStyle(.plain)
-        }
-        .navigationTitle("Chats")
-        .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Button(action: {
-                    showingProfile = true
-                }) {
-                    Image(systemName: "person.circle")
-                        .font(.title2)
+            .navigationTitle("Chats")
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button(action: {
+                        showingProfile = true
+                    }) {
+                        Image(systemName: "person.circle")
+                            .font(.title2)
+                    }
+                }
+                
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: {
+                        // TODO: Start new chat
+                    }) {
+                        Image(systemName: "square.and.pencil")
+                            .font(.title2)
+                    }
                 }
             }
-            
-            ToolbarItem(placement: .topBarTrailing) {
-                Button(action: {
-                    // TODO: Start new chat
-                }) {
-                    Image(systemName: "square.and.pencil")
-                        .font(.title2)
-                }
+            .sheet(isPresented: $showingProfile) {
+                ProfileView(isAuthenticated: $isAuthenticated)
             }
-        }
-        .sheet(isPresented: $showingProfile) {
-            ProfileView(isAuthenticated: $isAuthenticated)
         }
     }
 }
@@ -201,9 +203,18 @@ struct ChatRow: View {
         NavigationLink(destination: ChatDetailView(chat: chat)) {
             HStack(spacing: 12) {
                 // Avatar
-                Image(systemName: chat.avatarSystemName)
-                    .font(.system(size: 40))
-                    .foregroundStyle(Theme.primary)
+                Group {
+                    if chat.name.contains("Group") {
+                        Image(systemName: chat.avatarSystemName)
+                            .font(.system(size: 32))  // Smaller size for group icon
+                            .foregroundStyle(Theme.primary)
+                            .frame(width: 40, height: 40)  // Fixed frame to match other avatars
+                    } else {
+                        Image(systemName: chat.avatarSystemName)
+                            .font(.system(size: 40))
+                            .foregroundStyle(Theme.primary)
+                    }
+                }
                 
                 // Chat info
                 VStack(alignment: .leading, spacing: 4) {

@@ -3,6 +3,7 @@ import SwiftUI
 struct PaymentSheet: View {
     @Environment(\.dismiss) private var dismiss
     @State private var amount = ""
+    @State private var note = ""
     @State private var selectedSourceToken = Token.mockTokens[0]
     @State private var selectedDestToken = Token.mockTokens[2]
     @State private var showingTokenPicker = false
@@ -42,6 +43,18 @@ struct PaymentSheet: View {
                         token: selectedDestToken,
                         onTokenTap: { isSelectingSource = false; showingTokenPicker = true }
                     )
+                    
+                    // Note Field
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Note (optional)")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                        
+                        TextField("What's this payment for?", text: $note)
+                            .textFieldStyle(.roundedBorder)
+                            .font(.subheadline)
+                    }
+                    .padding(.horizontal)
                     
                     // Send Button
                     Button(action: processPayment) {
