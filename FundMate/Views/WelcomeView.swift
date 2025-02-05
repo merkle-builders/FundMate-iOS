@@ -7,6 +7,7 @@ struct WelcomeView: View {
     @State private var showError = false
     @State private var animateBackground = false
     @State private var showContent = false
+    @State private var showSuccess = false
     
     var body: some View {
         ZStack {
@@ -62,10 +63,22 @@ struct WelcomeView: View {
                 
                 Spacer()
                 
-                // Connect Wallet Button
+                // Connect Wallet Button or Success State
                 if isLoading {
                     LoadingView(text: "Connecting wallet...")
                         .transition(.scale.combined(with: .opacity))
+                } else if showSuccess {
+                    VStack(spacing: 16) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.system(size: 60))
+                            .foregroundStyle(.green)
+                            .transition(.scale.combined(with: .opacity))
+                        
+                        Text("Wallet Connected!")
+                            .font(.headline)
+                            .foregroundStyle(.secondary)
+                    }
+                    .transition(.scale.combined(with: .opacity))
                 } else {
                     Button(action: connectWallet) {
                         HStack {
@@ -109,13 +122,20 @@ struct WelcomeView: View {
             isLoading = true
         }
         
-        // Simulate wallet connection with guaranteed success
+        // Simulate wallet connection with success animation
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            withAnimation {
+            withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
                 isLoading = false
-                isAuthenticated = true
+                showSuccess = true
             }
             HapticManager.notification(type: .success)
+            
+            // Wait a moment to show success state before transitioning
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                withAnimation {
+                    isAuthenticated = true
+                }
+            }
         }
     }
 } 
