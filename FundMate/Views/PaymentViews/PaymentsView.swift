@@ -12,10 +12,10 @@ struct PaymentsView: View {
     
     // Mock holdings data - in real app this would come from a wallet/backend
     let holdings = [
-        TokenHolding(token: Token.mockTokens[0], amount: 1.5),  // ETH
-        TokenHolding(token: Token.mockTokens[1], amount: 0.25), // BTC
+        TokenHolding(token: Token.mockTokens[0], amount: 1.2),  // ETH
+        TokenHolding(token: Token.mockTokens[1], amount: 0.05), // BTC
         TokenHolding(token: Token.mockTokens[2], amount: 500),  // USDC
-        TokenHolding(token: Token.mockTokens[3], amount: 100)   // APT
+        TokenHolding(token: Token.mockTokens[3], amount: 80)   // APT
     ]
     
     // Mock transaction history
