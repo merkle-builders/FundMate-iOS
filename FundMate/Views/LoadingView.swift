@@ -29,13 +29,6 @@ struct LoadingView: View {
                     .frame(width: 60, height: 60)
                     .rotationEffect(.degrees(rotation))
                 
-                // Pulsing dot
-                Circle()
-                    .fill(Theme.primary)
-                    .frame(width: 12, height: 12)
-                    .offset(y: -30)
-                    .scaleEffect(scale)
-                    .opacity(opacity)
             }
             
             // Loading text
